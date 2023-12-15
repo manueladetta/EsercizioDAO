@@ -42,28 +42,6 @@ public class LibroDAOImpl implements LibroDAO {
             }
         }
     }
-
-	/*
-	 *  String query = "SELECT l.Titolo, l.numPag, l.Anno, e.nome, g.descrizione, a.NomeA, a.CognomeA " +
-        			   "FROM libri l JOIN editore e ON l.Editore = e.codiceE " + 
-        			   "JOIN autori a ON l.Autore = a.id_autore " + 
-        			   "JOIN genere g ON g.codeiceG = l.Genere";
-
-        try (Statement statement = conn.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
-
-            while (resultSet.next()) {
-                Libro libro = new Libro();
-                libro.setId(resultSet.getInt("l.id_libro"));
-                libro.setTitolo(resultSet.getString("l.Titolo"));
-                libro.setNumPag(resultSet.getInt("l.numPag"));
-                libro.setAnno(resultSet.getInt("l.Anno"));
-                libro.setEditore(resultSet.getString("e.nome"));
-                libro.setGenere(resultSet.getString("g.descrizione"));
-                libro.setAutore(resultSet.getString("a.NomeA" + "a.CognomeA"));
-                libri.add(libro);
-            }
-    */
 	
 	@Override
 	public List<LibroGetAll> getAll() {
