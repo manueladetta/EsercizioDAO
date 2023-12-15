@@ -5,6 +5,7 @@ import java.util.List;
 import it.betacom.dao.LibroDAO;
 import it.betacom.dao.impl.LibroDAOImpl;
 import it.betacom.model.Libro;
+import it.betacom.model.LibroGetAll;
 
 public class TestLibro {
 	public static void main(String[] args) {
@@ -17,7 +18,7 @@ public class TestLibro {
 
         // b. Chiamiamo il metodo 5: stampiamo i dati del libro richiesto
         int id_libro = 1; 
-        Libro libroById = libroDAO.getLibroByID(id_libro);
+        LibroGetAll libroById = libroDAO.getLibroByID(id_libro);
         if (libroById != null) {
             System.out.println("\nDati del libro con id " + id_libro + ":");
             System.out.println(libroById);
@@ -36,8 +37,9 @@ public class TestLibro {
         }
 
         // d. Chiamiamo il metodo 7: stampiamo l'esito dell'aggiornamento e la lista aggiornata
-        List<Libro> libri = libroDAO.getAll();
-        Libro libroToUpdate = libri.get(libri.size() - 1);
+        List<LibroGetAll> libri = libroDAO.getAll();
+        LibroGetAll libroToUpdateGetAll = libri.get(libri.size() - 1);
+        Libro libroToUpdate = ((LibroDAOImpl) libroDAO).convertToLibro(libroToUpdateGetAll);
         libroToUpdate.setTitolo("Nuovo titolo");
         boolean isUpdated = libroDAO.update(libroToUpdate);
         if (isUpdated) {
@@ -62,8 +64,8 @@ public class TestLibro {
 	}
 	
 	// Metodo per stampare la lista di generi
-    private static void printLibri(List<Libro> libri) {
-        for (Libro libro : libri) {
+    private static void printLibri(List<LibroGetAll> libri) {
+        for (LibroGetAll libro : libri) {
             System.out.println(libro);
         }
     }

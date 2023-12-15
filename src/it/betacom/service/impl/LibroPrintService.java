@@ -5,12 +5,12 @@ import java.util.List;
 
 import it.betacom.dao.LibroDAO;
 import it.betacom.dao.impl.LibroDAOImpl;
-import it.betacom.model.Libro;
+import it.betacom.model.LibroGetAll;
 import it.betacom.service.PrintService;
 import it.betacom.utilities.LeggiValori;
 import it.betacom.utilities.MyUtility;
 
-public class LibroPrintService implements PrintService<Libro> {
+public class LibroPrintService implements PrintService<LibroGetAll> {
 	
 	private LibroDAO libroDAO;
 	
@@ -24,7 +24,7 @@ public class LibroPrintService implements PrintService<Libro> {
 	public void saveListAsPdf() {
 		libroDAO = new LibroDAOImpl();
 		
-		List<Libro> libri = libroDAO.getAll();
+		List<LibroGetAll> libri = libroDAO.getAll();
 		
 		myUtility.stampaPDF("Lista Libri", libri, "ListaLibri.pdf", new LibroPdfEntityPrinter());
 		
@@ -37,7 +37,7 @@ public class LibroPrintService implements PrintService<Libro> {
 	public void saveListAsCsv() {
 		libroDAO = new LibroDAOImpl();
 		
-		List<Libro> libri = libroDAO.getAll();
+		List<LibroGetAll> libri = libroDAO.getAll();
 		
         myUtility.stampaCSV("Lista Libri", libri, "ListaLibri.csv", new LibroCsvEntityPrinter(), header);
 		
@@ -50,7 +50,7 @@ public class LibroPrintService implements PrintService<Libro> {
 	public void saveListAsTxt() {
 		libroDAO = new LibroDAOImpl();
 		
-		List<Libro> libri = libroDAO.getAll();
+		List<LibroGetAll> libri = libroDAO.getAll();
 		
         myUtility.stampaTXT("Lista Libri", libri, "ListaLibri.txt", new LibroTxtEntityPrinter());
 		
@@ -60,10 +60,10 @@ public class LibroPrintService implements PrintService<Libro> {
 	}
 
 	@Override
-	public void saveAsPdf(Libro libro) {
+	public void saveAsPdf(LibroGetAll libro) {
 		libroDAO = new LibroDAOImpl();
 				
-		myUtility.stampaPDF("Singolo Libro", libro, libro.getTitolo() + "_" + libro.getAutore() + ".pdf", new LibroPdfEntityPrinter());
+		myUtility.stampaPDF("Singolo Libro", libro, libro.getTitolo() + "_" + libro.getNomeAutore() + "_" + libro.getCognomeAutore()  + ".pdf", new LibroPdfEntityPrinter());
 		
 		System.out.println("La stampa del singolo libro in pdf e' stata creata");		
 		
@@ -71,10 +71,10 @@ public class LibroPrintService implements PrintService<Libro> {
 	}
 
 	@Override
-	public void saveAsCsv(Libro libro) {
+	public void saveAsCsv(LibroGetAll libro) {
 		libroDAO = new LibroDAOImpl();
 		
-		myUtility.stampaCSV("Singolo Libro", libro, libro.getTitolo() + "_" + libro.getAutore() + ".csv", new LibroCsvEntityPrinter(), header);
+		myUtility.stampaCSV("Singolo Libro", libro, libro.getTitolo() + "_" + libro.getNomeAutore() + "_" + libro.getCognomeAutore()  + ".csv", new LibroCsvEntityPrinter(), header);
 		
 		System.out.println("La stampa del singolo libro in csv e' stata creata");	
 		
@@ -82,10 +82,10 @@ public class LibroPrintService implements PrintService<Libro> {
 	}
 
 	@Override
-	public void saveAsTxt(Libro libro) {
+	public void saveAsTxt(LibroGetAll libro) {
 		libroDAO = new LibroDAOImpl();
 		
-		myUtility.stampaTXT("Singolo Libro", libro, libro.getTitolo() + "_" + libro.getAutore() + ".txt", new LibroTxtEntityPrinter());
+		myUtility.stampaTXT("Singolo Libro", libro, libro.getTitolo() + "_" + libro.getNomeAutore() + "_" + libro.getCognomeAutore() + ".txt", new LibroTxtEntityPrinter());
 		
 		System.out.println("La stampa del singolo libro in txt e' stata creata");	
 		
@@ -93,51 +93,51 @@ public class LibroPrintService implements PrintService<Libro> {
 	}
 	
 	
-	public class LibroPdfEntityPrinter implements MyUtility.EntityPrinter<Libro> {
+	public class LibroPdfEntityPrinter implements MyUtility.EntityPrinter<LibroGetAll> {
 
 	    @Override
-	    public String printEntity(Libro libro) {
+	    public String printEntity(LibroGetAll libro) {
 	    	StringBuilder stringBuilder = new StringBuilder();
 	        stringBuilder.append("ID: ").append(libro.getId()).append("\n")
 	                     .append("Titolo: ").append(libro.getTitolo()).append("\n")
 	                     .append("Anno: ").append(libro.getAnno()).append("\n")
 	                     .append("Numero di pagine: ").append(libro.getNumPag()).append("\n")
-	                     .append("Id Autore: ").append(libro.getAutore()).append("\n")
-	                     .append("Id Genere: ").append(libro.getGenere()).append("\n")
-	                     .append("Id Editore: ").append(libro.getEditore()).append("\n")
+	                     .append("Autore: ").append(libro.getNomeAutore() + " " + libro.getCognomeAutore()).append("\n")
+	                     .append("Genere: ").append(libro.getGenere()).append("\n")
+	                     .append("Editore: ").append(libro.getEditore()).append("\n")
 	                     .append("-----------------------------------------------------------\n");
 	        return stringBuilder.toString();
 	    }
 	}
 	
-	public class LibroCsvEntityPrinter implements MyUtility.EntityPrinter<Libro> {
+	public class LibroCsvEntityPrinter implements MyUtility.EntityPrinter<LibroGetAll> {
 
 	    @Override
-	    public String printEntity(Libro libro) {	        
+	    public String printEntity(LibroGetAll libro) {	        
 	        StringBuilder stringBuilder = new StringBuilder();
 	        stringBuilder.append(libro.getId()).append(";")
 	                     .append(libro.getTitolo()).append(";")
 	                     .append(libro.getAnno()).append(";")
 	                     .append(libro.getNumPag()).append(";")
-	                     .append(libro.getAutore()).append(";")
+	                     .append(libro.getNomeAutore() + " " + libro.getCognomeAutore()).append(";")
 	                     .append(libro.getGenere()).append(";")
 	                     .append(libro.getEditore()).append("\n");
 	        return stringBuilder.toString();
 	    }
 	}
 
-	public class LibroTxtEntityPrinter implements MyUtility.EntityPrinter<Libro> {
+	public class LibroTxtEntityPrinter implements MyUtility.EntityPrinter<LibroGetAll> {
 
 	    @Override
-	    public String printEntity(Libro libro) {
+	    public String printEntity(LibroGetAll libro) {
 	        StringBuilder stringBuilder = new StringBuilder();
 	        stringBuilder.append("ID: ").append(libro.getId()).append("\n")
 	                     .append("Titolo: ").append(libro.getTitolo()).append("\n")
 	                     .append("Anno: ").append(libro.getAnno()).append("\n")
 	                     .append("Numero di pagine: ").append(libro.getNumPag()).append("\n")
-	                     .append("Id Autore: ").append(libro.getAutore()).append("\n")
-	                     .append("Id Genere: ").append(libro.getGenere()).append("\n")
-	                     .append("Id Editore: ").append(libro.getEditore()).append("\n")
+	                     .append("Autore: ").append(libro.getNomeAutore() + " " + libro.getCognomeAutore()).append("\n")
+	                     .append("Genere: ").append(libro.getGenere()).append("\n")
+	                     .append("Editore: ").append(libro.getEditore()).append("\n")
 	                     .append("-----------------------------------------------------------\n");
 	        return stringBuilder.toString();
 	    }

@@ -11,6 +11,7 @@ import java.util.List;
 
 import it.betacom.dao.LibroDAO;
 import it.betacom.model.Libro;
+import it.betacom.model.LibroGetAll;
 import it.betacom.utilities.LeggiValori;
 
 public class LibroDAOImpl implements LibroDAO {
@@ -65,24 +66,28 @@ public class LibroDAOImpl implements LibroDAO {
     */
 	
 	@Override
-	public List<Libro> getAll() {
-		List<Libro> libri = new ArrayList<>();
-        String query = "SELECT * FROM libri";
+	public List<LibroGetAll> getAll() {
+		List<LibroGetAll> libri = new ArrayList<>();
+		String query = "SELECT l.id_libro, l.Titolo, l.numPag, l.Anno, e.nome, g.descrizione, a.NomeA, a.CognomeA " +
+ 			   "FROM libri l JOIN editore e ON l.Editore = e.codiceE " + 
+ 			   "JOIN autori a ON l.Autore = a.id_autore " + 
+ 			   "JOIN genere g ON g.codeiceG = l.Genere";
 
-        try (Statement statement = conn.createStatement();
-             ResultSet resultSet = statement.executeQuery(query)) {
-
-            while (resultSet.next()) {
-                Libro libro = new Libro();
-                libro.setId(resultSet.getInt("id_libro"));
-                libro.setTitolo(resultSet.getString("Titolo"));
-                libro.setNumPag(resultSet.getInt("numPag"));
-                libro.setAnno(resultSet.getInt("Anno"));
-                libro.setEditore(resultSet.getInt("Editore"));
-                libro.setGenere(resultSet.getInt("Genere"));
-                libro.setAutore(resultSet.getInt("Autore"));
-                libri.add(libro);
-            }
+		 try (Statement statement = conn.createStatement();
+		      ResultSet resultSet = statement.executeQuery(query)) {
+		
+		     while (resultSet.next()) {
+		         LibroGetAll libro = new LibroGetAll();
+		         libro.setId(resultSet.getInt("l.id_libro"));
+		         libro.setTitolo(resultSet.getString("l.Titolo"));
+		         libro.setNumPag(resultSet.getInt("l.numPag"));
+		         libro.setAnno(resultSet.getInt("l.Anno"));
+		         libro.setEditore(resultSet.getString("e.nome"));
+		         libro.setGenere(resultSet.getString("g.descrizione"));
+		         libro.setNomeAutore(resultSet.getString("a.NomeA"));
+		         libro.setCognomeAutore(resultSet.getString("a.CognomeA"));
+		         libri.add(libro);
+		     }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -93,23 +98,28 @@ public class LibroDAOImpl implements LibroDAO {
 	}
 
 	@Override
-	public Libro getLibroByID(int id_libro) {
-		String query = "SELECT * FROM libri WHERE id_libro = ?";
-        Libro libro = null;
+	public LibroGetAll getLibroByID(int id_libro) {
+		String query = "SELECT l.id_libro, l.Titolo as Titolo, l.numPag, l.Anno, e.nome, g.descrizione, a.NomeA, a.CognomeA " +
+	 			   "FROM libri l JOIN editore e ON l.Editore = e.codiceE " + 
+	 			   "JOIN autori a ON l.Autore = a.id_autore " + 
+	 			   "JOIN genere g ON g.codeiceG = l.Genere "+
+	 			   "WHERE id_libro = ?";
+        LibroGetAll libro = null;
 
         try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
             preparedStatement.setInt(1, id_libro);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-            	libro = new Libro();
-            	libro.setId(resultSet.getInt("id_libro"));
-                libro.setTitolo(resultSet.getString("Titolo"));
-                libro.setNumPag(resultSet.getInt("numPag"));
-                libro.setAnno(resultSet.getInt("Anno"));
-                libro.setEditore(resultSet.getInt("Editore"));
-                libro.setGenere(resultSet.getInt("Genere"));
-                libro.setAutore(resultSet.getInt("Autore"));
+            	libro = new LibroGetAll();
+            	libro.setId(resultSet.getInt("l.id_libro"));
+		         libro.setTitolo(resultSet.getString("l.Titolo"));
+		         libro.setNumPag(resultSet.getInt("l.numPag"));
+		         libro.setAnno(resultSet.getInt("l.Anno"));
+		         libro.setEditore(resultSet.getString("e.nome"));
+		         libro.setGenere(resultSet.getString("g.descrizione"));
+		         libro.setNomeAutore(resultSet.getString("a.NomeA"));
+		         libro.setCognomeAutore(resultSet.getString("a.CognomeA"));
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -183,6 +193,35 @@ public class LibroDAOImpl implements LibroDAO {
         }
 
         return deleted;
+	}
+	
+	public Libro convertToLibro(LibroGetAll libro) {
+		Libro l = null;
+		
+		String query = "SELECT * FROM libri " +
+	 			   "WHERE id_libro = ?";
+
+     try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+         preparedStatement.setInt(1, libro.getId());
+         ResultSet resultSet = preparedStatement.executeQuery();
+
+         if (resultSet.next()) {
+         	l = new Libro();
+         	l.setId(resultSet.getInt("id_libro"));
+	         l.setTitolo(resultSet.getString("Titolo"));
+	         l.setNumPag(resultSet.getInt("numPag"));
+	         l.setAnno(resultSet.getInt("Anno"));
+	         l.setEditore(resultSet.getInt("Editore"));
+	         l.setGenere(resultSet.getInt("Genere"));
+	         l.setAutore(resultSet.getInt("Autore"));
+         }
+     } catch (SQLException e) {
+         System.out.println(e.getMessage());
+         e.printStackTrace();
+         this.closeConnection();
+     }
+		
+		return l;
 	}
 
 }

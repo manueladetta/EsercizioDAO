@@ -13,7 +13,7 @@ import it.betacom.dao.impl.LibroDAOImpl;
 import it.betacom.model.Autore;
 import it.betacom.model.Editore;
 import it.betacom.model.Genere;
-import it.betacom.model.Libro;
+import it.betacom.model.LibroGetAll;
 import it.betacom.service.PrintService;
 import it.betacom.service.impl.AutorePrintService;
 import it.betacom.service.impl.EditorePrintService;
@@ -54,12 +54,12 @@ public class TestPrintService {
 		generePS.saveAsCsv(generi.get(0));
 		generePS.saveAsTxt(generi.get(0));
 		
-		PrintService<Libro> libroPS = new LibroPrintService();
+		PrintService<LibroGetAll> libroPS = new LibroPrintService();
 		libroPS.saveListAsPdf();
 		libroPS.saveListAsCsv();
 		libroPS.saveListAsTxt();
 		LibroDAO libroDAO = new LibroDAOImpl();
-		List<Libro> libri = libroDAO.getAll();
+		List<LibroGetAll> libri = libroDAO.getAll();
 		libroPS.saveAsPdf(libri.get(0));
 		libroPS.saveAsCsv(libri.get(0));
 		libroPS.saveAsTxt(libri.get(0));
